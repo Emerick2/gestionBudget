@@ -52,8 +52,9 @@ router.get('/expenses/:id', (req, res) => {
 //POST	/api/expenses	Créer
 router.post('/expenses', (req, res) => {
     const { description, amount, category, date } = req.body;
-    if (!ValidationData(description,amount, category, date)){
-        return res.status(404).json({ error: "Données non valide" });
+    const validation = ValidationData(description,amount, category, date);
+    if (validation != ""){
+        return res.status(404).json({ error: "Données non valide : "+validation });
     }
     const nouvelleObjet = {
         id : listDepance.length+1,
