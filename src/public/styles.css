@@ -1,0 +1,271 @@
+/* Reset simple */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0f172a;
+  color: #e5e7eb;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 32px 16px;
+}
+
+.app {
+  width: 100%;
+  max-width: 960px;
+  background: #020617;
+  border-radius: 16px;
+  padding: 24px 24px 32px;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+/* Titres */
+h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #f9fafb;
+  margin-bottom: 8px;
+}
+
+h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin: 24px 0 12px;
+}
+
+/* Sous-titre / description */
+.subtitle {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+
+/* Layout principal */
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Cartes */
+.card {
+  background: radial-gradient(circle at top left, #1d283a, #020617);
+  border-radius: 12px;
+  padding: 16px 18px 18px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+/* Formulaire */
+form {
+  display: grid;
+  grid-template-columns: 1fr 0.7fr;
+  gap: 10px 12px;
+  margin-bottom: 8px;
+}
+
+form .full-row {
+  grid-column: 1 / -1;
+}
+
+label {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-bottom: 4px;
+  display: block;
+}
+
+input,
+select,
+button {
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  color: #e5e7eb;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+input::placeholder {
+  color: #6b7280;
+}
+
+input:focus,
+select:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
+  background: #020617;
+}
+
+/* Bouton principal */
+button.primary {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #022c22;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.1s ease, filter 0.1s ease;
+}
+
+button.primary:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 12px 25px -8px rgba(34, 197, 94, 0.5);
+  transform: translateY(-1px);
+}
+
+button.primary:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Filtres */
+.filters {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.filters select {
+  max-width: 170px;
+}
+
+/* Liste des dépenses */
+.list {
+  margin-top: 4px;
+  border-radius: 10px;
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  background: linear-gradient(145deg, #020617, #020617);
+  max-height: 340px;
+  overflow: auto;
+}
+
+.list-header,
+.list-item {
+  display: grid;
+  grid-template-columns: 1.3fr 0.6fr 0.7fr 0.8fr;
+  gap: 8px;
+  align-items: center;
+  padding: 9px 12px;
+  font-size: 0.85rem;
+}
+
+.list-header {
+  position: sticky;
+  top: 0;
+  background: #020617;
+  border-bottom: 1px solid #1f2937;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.75rem;
+}
+
+.list-item:nth-child(odd) {
+  background: rgba(15, 23, 42, 0.7);
+}
+
+.list-item:nth-child(even) {
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.badge.électricité,
+.badge.eau,
+.badge.alimentaire,
+.badge.transport,
+.badge.loisirs,
+.badge.autre {
+  background: rgba(148, 163, 184, 0.2);
+  color: #e5e7eb;
+}
+
+.amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #f97316;
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.stat-card {
+  background: radial-gradient(circle at top left, #1e293b, #020617);
+  border-radius: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(31, 41, 55, 0.9);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+/* Zone d’erreurs / messages */
+.alert {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.alert.error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.7);
+  color: #fecaca;
+}
+
+.alert.success {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.7);
+  color: #bbf7d0;
+}
