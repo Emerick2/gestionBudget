@@ -51,7 +51,7 @@ router.delete('/expenses/:id', (req, res) => {
 });
 
 
-
+//curl https://gestion-budget.osc-fr1.scalingo.io/api/expenses/stats
 /*
 GET	/api/expenses	Tous + ?category=X pour filtrer
 GET	/api/expenses/stats	Total par catégorie
