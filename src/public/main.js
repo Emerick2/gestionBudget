@@ -24,9 +24,10 @@ function renderExpenses(expenses) {
 function renderStats(stats) {
   const ul = document.getElementById('stats-list');
   ul.innerHTML = '';
-  stats.forEach(s => {
+  
+  Object.entries(stats).forEach(([category, total]) => {
     const li = document.createElement('li');
-    li.textContent = `${s.category}: ${s.total}€`;
+    li.textContent = `${category}: ${total}€`;
     ul.appendChild(li);
   });
 }
@@ -46,7 +47,7 @@ document.getElementById('expense-form').addEventListener('submit', async (e) => 
   const form = e.target;
   const body = {
     description: form.description.value,
-    amount: form.amount.value,
+    amount: Number(form.amount.value),
     category: form.category.value,
     date: form.date.value,
   };

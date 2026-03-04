@@ -1,4 +1,4 @@
-const categorie = ["charge fixe", "électricité", "eau", "autres"];
+const categorie = ["charge fixe", "électricité", "eau", "autre","alimentaire","transport","loisirs"];
 
 /**
  * @param {string} description 
