@@ -1,8 +1,86 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <body>
-        <main>
-            <P>La page d'acceuil</P>
-        </main>
-    </body>
+<head>
+  <meta charset="UTF-8">
+  <title>Budget perso</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <h1>Gestion de Budget</h1>
+    <p class="subtitle">Ajoute, filtre et analyse tes dépenses en temps réel.</p>
+
+    <div class="grid">
+      <!-- Colonne gauche : formulaire -->
+      <div class="card">
+        <h2>Nouvelle dépense</h2>
+        <form id="expense-form">
+          <div class="full-row">
+            <label for="description">Description</label>
+            <input id="description" name="description" placeholder="Ex : Courses, Uber, Netflix..." required />
+          </div>
+
+          <div>
+            <label for="amount">Montant</label>
+            <input id="amount" name="amount" type="number" step="0.01" placeholder="Ex : 24.90" required />
+          </div>
+
+          <div>
+            <label for="category">Catégorie</label>
+            <select id="category" name="category">
+              <option value="alimentaire">Alimentaire</option>
+              <option value="transport">Transport</option>
+              <option value="loisirs">Loisirs</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+
+          <div class="full-row">
+            <label for="date">Date</label>
+            <input id="date" name="date" type="date" required />
+          </div>
+
+          <div class="full-row">
+            <button type="submit" class="primary">Ajouter la dépense</button>
+          </div>
+        </form>
+
+        <div id="form-alert" class="alert" style="display:none;"></div>
+      </div>
+
+      <!-- Colonne droite : filtres + liste -->
+      <div class="card">
+        <div class="filters">
+          <label for="filter-category">Filtrer par catégorie</label>
+          <select id="filter-category">
+            <option value="">Toutes</option>
+            <option value="alimentaire">Alimentaire</option>
+            <option value="transport">Transport</option>
+            <option value="loisirs">Loisirs</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+
+        <div class="list">
+          <div class="list-header">
+            <span>Description</span>
+            <span>Montant</span>
+            <span>Catégorie</span>
+            <span>Date</span>
+          </div>
+          <div id="expenses-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Statistiques</h2>
+    <div class="card">
+      <div class="stats-grid" id="stats-list">
+        <!-- rempli en JS -->
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
 </html>
