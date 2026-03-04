@@ -7,7 +7,7 @@ const categorie = ["charge fixe", "électricité", "eau", "autre","alimentaire",
  * @param {*} date (04-03-2026) 
  * @returns boolean
  */
-function ValidationData(description, amount, category, date){
+function ValidationData(description, amount, categorie, date){
     if (description.length>200){
         console.log("La description est trop longue");
         return false;
@@ -33,3 +33,5 @@ function ValidationData(description, amount, category, date){
     }
     return true;
 }
+
+module.exports = ValidationData;

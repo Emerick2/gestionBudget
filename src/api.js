@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const ValidationData = require('./validationData');
 
 const listDepance = [
     { id:1,description : 'ma dépance1', amount : 60, category :'charge fixe', date : '04-03-2026' },
@@ -51,6 +52,9 @@ router.get('/expenses/:id', (req, res) => {
 //POST	/api/expenses	Créer
 router.post('/expenses', (req, res) => {
     const { description, amount, category, date } = req.body;
+    if (!ValidationData(description,amount, category, date)){
+        return res.status(404).json({ error: "Données non valide" });
+    }
     const nouvelleObjet = {
         id : listDepance.length+1,
         description : description,
