@@ -1,1 +1,0 @@
- ./../../todo-app-scalingo/scalingo.exe
