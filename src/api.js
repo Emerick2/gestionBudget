@@ -1,99 +1,162 @@
 const express = require('express');
 const router = express.Router();
+const pool = require('./db/pool');
 
-const listDepance = [
-    { id:1,description : 'ma dépance1', amount : 60, category :'charge fixe', date : '04-03-2026' },
-    { id:2,description : 'ma dépance2', amount : 40, category :'charge fixe', date : '04-03-2026' },
-    { id:3,description : 'ma dépance3', amount : 20, category :'eau', date : '04-03-2026' }
-];
+const allowedCategories = ['alimentaire', 'transport', 'loisirs', 'autre'];
+
+function validateExpenseInput(data, isUpdate = false) {
+    const errors = [];
+    const { description, amount, category, date } = data;
+
+    if (!isUpdate || description !== undefined) {
+        if (!description || typeof description !== 'string' || description.trim().length === 0) {
+            errors.push('Description obligatoire');
+        } else if (description.trim().length > 200) {
+            errors.push('Description max 200 caractères');
+        }
+    }
+
+    if (!isUpdate || amount !== undefined) {
+        const parsedAmount = Number(amount);
+        if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+            errors.push('Amount doit être un nombre > 0');
+        }
+    }
+
+    if (!isUpdate || category !== undefined) {
+        if (!allowedCategories.includes(category)) {
+            errors.push('Category invalide');
+        }
+    }
+
+    if (!isUpdate || date !== undefined) {
+        const parsedDate = new Date(date);
+        if (!date || Number.isNaN(parsedDate.getTime())) {
+            errors.push('Date invalide');
+        }
+    }
+
+    return errors;
+}
 
 //GET	/api/expenses	Tous + ?category=X pour filtrer
-router.get('/expenses', (req, res) => {
+router.get('/expenses', async (req, res) => {
     // /api/expenses?category=eau
     const { category } = req.query;
-    let resultats = listDepance;
-    if (category) {
-        resultats = listDepance.filter(d => 
-            d.category.toLowerCase() === category.toLowerCase()
-        );
+    try {
+        if (category) {
+            const query = 'SELECT * FROM expenses WHERE category = $1 ORDER BY date DESC, id DESC';
+            const { rows } = await pool.query(query, [category]);
+            return res.json(rows);
+        }
+        const { rows } = await pool.query('SELECT * FROM expenses ORDER BY date DESC, id DESC');
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur serveur', message: error.message });
     }
-    res.json(resultats);
 });
 
 //GET	/api/expenses/stats	Total par catégorie
-router.get('/expenses/stats', (req, res) => {
-    const stats = {};
-
-    listDepance.forEach(depense => {
-        const category = depense.category;
-        
-        if (stats[category]) {
-            stats[category]+=depense.amount;
-        } else {
-            stats[category] = depense.amount;
-        }
-    });
-    res.json(stats);
+router.get('/expenses/stats', async (req, res) => {
+    try {
+        const { rows } = await pool.query(
+            'SELECT category, COALESCE(SUM(amount), 0) AS total FROM expenses GROUP BY category ORDER BY category'
+        );
+        const stats = {};
+        rows.forEach((row) => {
+            stats[row.category] = Number(row.total);
+        });
+        res.json(stats);
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur serveur', message: error.message });
+    }
 });
 
 //GET	/api/expenses/:id	Détail
-router.get('/expenses/:id', (req, res) => {
-    const idCherche = req.params.id;
-
-    const depense = listDepance.find(d => d.id == idCherche);
-
-    if (!depense) {
-        return res.status(404).json({ error: "Dépense non trouvée" });
+router.get('/expenses/:id', async (req, res) => {
+    const idCherche = Number(req.params.id);
+    try {
+        const { rows } = await pool.query('SELECT * FROM expenses WHERE id = $1', [idCherche]);
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "Dépense non trouvée" });
+        }
+        res.json(rows[0]);
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur serveur', message: error.message });
     }
-    res.json(depense);
 });
 
 //POST	/api/expenses	Créer
-router.post('/expenses', (req, res) => {
+router.post('/expenses', async (req, res) => {
     const { description, amount, category, date } = req.body;
-    const nouvelleObjet = {
-        id : listDepance.length+1,
-        description : description,
-        amount : amount,
-        category : category,
-        date: date || new Date().toISOString().split('T')[0]
+    const errors = validateExpenseInput({ description, amount, category, date });
+    if (errors.length > 0) {
+        return res.status(400).json({ errors });
     }
-    listDepance.push(nouvelleObjet);
-    res.status(201).json(nouvelleObjet);
+
+    try {
+        const query = `
+            INSERT INTO expenses (description, amount, category, date)
+            VALUES ($1, $2, $3, $4)
+            RETURNING *
+        `;
+        const values = [description.trim(), Number(amount), category, date];
+        const { rows } = await pool.query(query, values);
+        res.status(201).json(rows[0]);
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur serveur', message: error.message });
+    }
 });
 
 //PUT	/api/expenses/:id	Modifier
-router.put('/expenses/:id', (req, res) => {
-    const idCherche = req.params.id;
+router.put('/expenses/:id', async (req, res) => {
+    const idCherche = Number(req.params.id);
     const { description, amount, category, date } = req.body; 
-
-    const index = listDepance.findIndex(d => d.id == idCherche);
-
-    if (index === -1) {
-        return res.status(404).json({ error: "Dépense non trouvée" });
+    const errors = validateExpenseInput({ description, amount, category, date }, true);
+    if (errors.length > 0) {
+        return res.status(400).json({ errors });
     }
 
-    listDepance[index] = {
-        ...listDepance[index],
-        description: description || listDepance[index].description,
-        amount: amount || listDepance[index].amount,
-        category: category || listDepance[index].category,
-        date: date || listDepance[index].date
-    };
+    try {
+        const { rows: existingRows } = await pool.query('SELECT * FROM expenses WHERE id = $1', [idCherche]);
+        if (existingRows.length === 0) {
+            return res.status(404).json({ error: "Dépense non trouvée" });
+        }
+        const existing = existingRows[0];
 
-    res.json(listDepance[index]);
+        const query = `
+            UPDATE expenses
+            SET description = $1, amount = $2, category = $3, date = $4
+            WHERE id = $5
+            RETURNING *
+        `;
+        const values = [
+            (description !== undefined ? description : existing.description).trim(),
+            Number(amount !== undefined ? amount : existing.amount),
+            category !== undefined ? category : existing.category,
+            date !== undefined ? date : existing.date,
+            idCherche,
+        ];
+        const { rows } = await pool.query(query, values);
+        res.json(rows[0]);
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur serveur', message: error.message });
+    }
+
 });
 
 //DELETE	/api/expenses/:id	Supprimer
-router.delete('/expenses/:id', (req, res) => {
-    const idCherche = req.params.id;
-    const index = listDepance.findIndex(d => d.id == idCherche);
-
-    if (index !== -1) {
-        listDepance.splice(index, 1);
+router.delete('/expenses/:id', async (req, res) => {
+    const idCherche = Number(req.params.id);
+    try {
+        const { rowCount } = await pool.query('DELETE FROM expenses WHERE id = $1', [idCherche]);
+        if (rowCount > 0) {
         return res.status(204).send();
+        }
+        res.status(404).json({ error: "Dépense non trouvée" });
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur serveur', message: error.message });
     }
-    res.status(404).json({ error: "Dépense non trouvée" });
 });
 
 
