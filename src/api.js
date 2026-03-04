@@ -39,8 +39,18 @@ router.get('/expenses/:id', (req, res) => {
 });
 
 router.post('/expenses', (req, res) => {
-    
-//   res.json({ status: 'ok' });
+    const description = "ma dépance1";
+    const amount = 60;
+    const category ="charge fixe";
+    const date = "04-03-2026";
+    const nouvelleObjet = {
+        id : listDepance.length+1,
+        description : description,
+        amount : amount,
+        category : category,
+        date : date
+    }
+    listDepance.push(nouvelleObjet);
 });
 
 router.put('/expenses/:id', (req, res) => {
