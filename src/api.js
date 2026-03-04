@@ -39,15 +39,16 @@ router.get('/expenses/:id', (req, res) => {
 });
 
 router.post('/expenses', (req, res) => {
-  res.json({ status: 'ok' });
+    
+//   res.json({ status: 'ok' });
 });
 
 router.put('/expenses/:id', (req, res) => {
-  res.json({ status: 'ok' });
+//   res.json({ status: 'ok' });
 });
 
 router.delete('/expenses/:id', (req, res) => {
-  res.json({ status: 'ok' });
+//   res.json({ status: 'ok' });
 });
 
 
@@ -60,3 +61,5 @@ POST	/api/expenses	Créer
 PUT	/api/expenses/:id	Modifier
 DELETE	/api/expenses/:id	Supprimer
 */
+
+module.exports = router;

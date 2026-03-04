@@ -26,9 +26,9 @@ app.listen(PORT, () => console.log(`Serveur actif sur le port ${PORT}`));
 // https://gestion-budget.osc-fr1.scalingo.io/
 
 
-require("dotenv").config() ;
+require("dotenv").config();
 console.log("DATABASE_URL", process.env.DATABASE_URL ? "réussite" : "erreur")
 if ( !process. env.DATABASE_URL){
-	console.log("erreur")
-	process.exit
+	console.log("erreur");
+	process.exit(1);
 }
